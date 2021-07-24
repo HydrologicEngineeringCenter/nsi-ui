@@ -1,5 +1,10 @@
 const census = require("citysdk")
 import {toLonLat} from 'ol/proj';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import GeoJSON from 'ol/format/GeoJSON';
+import Select from 'ol/interaction/Select';
+import {click} from 'ol/events/condition';
 const NSI_DOWNLOAD_INITALIZE_START='NSI_DOWNLOAD_INITALIZE_START';
 const NSI_DOWNLOAD_INITALIZE_END='NSI_DOWNLOAD_INITALIZE_END';
 const MAP_INITIALIZED='MAP_INITIALIZED';
@@ -41,33 +46,21 @@ export default{
 
 const initMap=function(store){
   const map = store.selectMap();
-  map.on('singleclick',function(evt) {
-      var f = evt.coordinate
-      f = toLonLat(f)
-      console.log(f)
-      census(
-          {
-              vintage: "2017",
-              geoHierarchy:{
-                  county:{
-                      lat: f[1],
-                      lng: f[0]
-                  }
-              }
-          }, function(error, response){
-              if (!error){
-                console.log(response)
-                console.log(response.geoHierarchy)
-                console.log(response.geoHierarchy.state)
-                var statefips = response.geoHierarchy.state
-                var url = `https://prod.mmc.usace.army.mil/files/nsiv2/nsiv2_${statefips}.gpkg.7z`
-                console.log(url)
-                fetch(url,null)
-              }else{
-                console.log(error)
-              }
-              
-          }
-      )
+  const vl = new VectorLayer({
+    source: new VectorSource({
+      format: new GeoJSON(),
+      url: 'https://raw.githubusercontent.com/uscensusbureau/citysdk/master/v2/GeoJSON/20m/2017/state.json'
+    })
   })
+  const selectSingleClick = new Select();
+    // select interaction working on "click"
+    map.addLayer(vl)
+    selectSingleClick.on('select', function(e) {
+        var statefips = e.selected[0].values_.STATEFP
+        var url = `https://prod.mmc.usace.army.mil/files/nsiv2/nsiv2_${statefips}.gpkg.7z`
+        fetch(url,{mode:'no-cors'})
+        console.log(url)
+    }
+    );
+    map.addInteraction(selectSingleClick)
 };
