@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@corpsmap/corpsmap": "^2.5.0",
+    "@corpsmap/corpsmap": "^0.1.0",
+    "citysdk": "^2.1.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
     "redux-bundler": "^28.0.2",
     "redux-bundler-react": "^1.2.0"
   },
-  "scripts":{
+  "scripts": {
     "start": "react-scripts start"
   },
   "browserslist": {

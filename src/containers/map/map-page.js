@@ -4,7 +4,6 @@ import {
   Map,
   addData,
   basemapSwitcher,
-  bookmarks,
   coordDisplay,
   draw,
   treeView,
@@ -15,10 +14,9 @@ import {
   zoomInOut,
   zoomHome,
   zoomToBox,
-  printMap,
-  themeSwitcher
 } from "@corpsmap/corpsmap";
 import "@corpsmap/corpsmap/css/corpsmap.css";
+import download from '../../cm-plugins/download';
 class MapPage extends React.Component {
   render(){
     return (
@@ -38,6 +36,7 @@ class MapPage extends React.Component {
                 zoomInOut,
                 zoomHome,
                 zoomToBox,
+                download,
               ]}
             />        
         </div>
