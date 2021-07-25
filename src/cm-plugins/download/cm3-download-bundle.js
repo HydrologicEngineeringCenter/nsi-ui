@@ -53,18 +53,14 @@ const initMap=function(store){
     })
   })
   const selectSingleClick = new Select();
-    // select interaction working on "click"
     map.addLayer(vl)
     selectSingleClick.on('select', function(e) {
         var statefips = e.selected[0].values_.STATEFP
         var url = `https://prod.mmc.usace.army.mil/files/nsiv2/nsiv2_${statefips}.gpkg.7z`
-        fetch(url,{mode:'no-cors'}).then(function(t) {
-                var a = document.createElement("a");
-                a.href = t;
-                a.setAttribute("download", `${statefips}.gpkg.7z`);
-                a.click();
-            }
-            );
+        var a = document.createElement("a");
+        a.href = url;
+        a.setAttribute("download", `${statefips}.gpkg.7z`);
+        a.click();
     });
     map.addInteraction(selectSingleClick)
 };
