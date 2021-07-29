@@ -1,3 +1,5 @@
+import {doRoutesUpdateUrl} from './routes-bundle';
+
 const UPDATE_AUTH_TOKEN = 'UPDATE_AUTH_TOKEN';
 const authNSIHost=process.env.REACT_APP_NSI_AUTH_HOST
 const appNSIId=process.env.REACT_APP_NSI_APPID
@@ -10,22 +12,13 @@ const parseJwt = (token) => {
   }
 };
 
-// A bundle can have:
-//   name
-//   reducer
-//   action creator
-//   selector (function for reading state)
-//   init method
-
-// doX - action
-// selectX - selector
-
 export default {
-  name: 'auth', 
+  name: 'auth',
   getReducer: () => {
     const initialState = {
       loading: false,
-      nsiToken:null
+      nsiToken:null,
+      userName:null,
     }
     return (state = initialState, { type, payload }) => {
       switch(type){
@@ -37,19 +30,18 @@ export default {
     }
   },
     doAuthFetchTokens:()=>({dispatch,store})=>{
-
-        // console.log(`${authNSIHost}/${appNSIId}`); // debugging
-
-        fetch(`${authNSIHost}/${appNSIId}`, { // fetch request / response objects
+        fetch(`${authNSIHost}/${appNSIId}`, {
             method: 'get'
         }).then(function(response) {
             return response.text();
         }).then(function(data) {
-            if(parseJwt(data)){
-                // console.log("parsing data...") // debugging
-                dispatch({type:UPDATE_AUTH_TOKEN,payload:{nsiToken:data}});
+            let claims = parseJwt(data);
+            if(claims){
+                dispatch({type:UPDATE_AUTH_TOKEN,payload:{nsiToken:data,userName:claims.name}});
+                store.doUpdateUrl('/main')
             }
         });      
     },
-    selectAuthNSIToken:state=>state.auth.nsiToken
+    selectAuthNSIToken:state=>state.auth.nsiToken,
+    selectAuthUserName:state=>state.auth.userName,
   }

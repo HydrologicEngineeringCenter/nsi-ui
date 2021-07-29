@@ -1,18 +1,22 @@
-import React from 'react';
-function USGDisclaimer(){
-    return(
-        <div className='modal' role='dialog' id="myModal">
-            <div className="modal-dialog" role="document">
-            <div className="modal-content">
-                <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">US Government Disclaimer</h5>
-                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div className="modal-body">
+import React,{useState} from 'react';
+import { connect } from 'redux-bundler-react';
+
+function USGDisclaimer(props){
+    
+    const {doAuthFetchTokens} = props;
+    const [showLogin,setShowLogin] = useState(false);
+
+    const handleLoginClick=function(){
+        doAuthFetchTokens();
+        setShowLogin(true);
+    }
+
+    const renderDisclaimer=function(){
+        return(
+            <React.Fragment>
+            <div>
                 You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-                    <p>
+                <p>
                     By using this IS (which includes any device attached to this IS), you consent to the following conditions:
                     <ul>
                         <li>
@@ -33,13 +37,38 @@ function USGDisclaimer(){
                     </ul>
                 </p>
             </div>
+
             <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">I Agree</button>
+                <button type="button" className="btn btn-secondary lg-btn-secondary" onClick={handleLoginClick}>I Agree</button>
             </div>
-            </div>
-            </div>
-</div>
+            </React.Fragment>
+        )
+    }
+
+    const renderLogin=function(){
+        return(
+            <React.Fragment>
+                <center>
+                <div>
+                    Logging into the NSI Survey Server
+                </div>
+                <div style={{"height":"20px"}}/>
+                <div>
+                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+                </center>
+            </React.Fragment>
+        )
+    }
+
+    return(
+        <div className="disclaimer">
+            {showLogin?renderLogin():renderDisclaimer()}
+        </div>
     )
 }
 
-export default USGDisclaimer
+export default connect(
+    'doAuthFetchTokens',
+    USGDisclaimer
+);

@@ -1,22 +1,19 @@
-  
 import React from 'react';
 import { connect } from 'redux-bundler-react';
-import LoginBanner from './login-banner';
-import USGDisclaimer from './USGDisclaimer';
+import LoginBanner from './LoginBanner'
+import NsiDisclaimer from './NsiDisclaimer';
 
-
-class LoginPage extends React.Component {
-  render(){
+function LoginPage() {
     return (
-      <div >
+      <div className="lg-bg">
         <LoginBanner/>
           <div className="container-fluid">
-            <USGDisclaimer/>
+            <NsiDisclaimer/>
           </div>
         </div>
     )
-  }
 }
+
 export default connect(
   LoginPage
-  );
+);
