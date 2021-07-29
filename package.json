@@ -7,7 +7,7 @@
     "citysdk": "^2.1.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^4.0.3",
     "redux-bundler": "^28.0.2",
     "redux-bundler-react": "^1.2.0"
   },
