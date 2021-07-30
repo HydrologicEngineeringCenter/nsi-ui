@@ -3,16 +3,25 @@ import { connect } from 'redux-bundler-react';
 import Map from '../map/map-page'
 import Banner from './banner'
 
-class MainPage extends React.Component {
-  render(){
-    return (
-      <div >
-        <Banner/>
-        <Map/>
-      </div>
-    )
+function MainPage(props) {
+
+  const {doUpdateUrl,authNSIToken} = props;
+
+  // not logged not
+  if(!authNSIToken) {
+    doUpdateUrl("/");
   }
+
+  return (
+    <div >
+      <Banner/>
+      <Map/>
+    </div>
+  )
 }
+
 export default connect(
+  'doUpdateUrl',
+  'selectAuthNSIToken',
   MainPage
   );
