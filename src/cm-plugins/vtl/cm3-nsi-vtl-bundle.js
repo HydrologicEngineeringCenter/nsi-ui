@@ -56,56 +56,10 @@ const nsiLayers={
   'NSIP2':`${apiHost}nsi2/tiles/{z}/{x}/{y}.pbf`,
 }
 
-// const initMap = function(store){
-//   const map = store.selectMap();
-//   const key = 'jjOxIUobSFakSIjS0Tk5wA';
-//   const parentUid = store.selectTreeViewRootId();
-
-
-//   const parcelsSource = new VectorTileSource({
-//     attributions:'USACE',
-//     format: new MVT(),
-//     url: nsiLayers.NSIP2,
-//   });
-
-//   const parcelsLayer = new VectorTileLayer({
-//     source: parcelsSource
-//   });
-
-//   // map.addLayer(parcelsLayer);
-
-//   store.doAddLayer({
-//     displayName: 'NSI VTL 1',
-//     parentUid: parentUid,
-//     type:"notfolder",
-//     mapLayer: parcelsLayer,
-//     visible: true,
-//     zoomTo: false,
-//   })
-  
-//   // console.log(map)
-//   // console.log(Object.getOwnPropertyNames(map).filter(item => typeof map[item] === 'function'))
-
-//   // // state mask
-//   // const vl = new VectorLayer({
-//   //   source: new VectorSource({
-//   //     format: new GeoJSON(),
-//   //     url: 'https://raw.githubusercontent.com/uscensusbureau/citysdk/master/v2/GeoJSON/20m/2017/state.json'
-//   //   })
-//   // })
-
-//   // map.addLayer(vl);
-
-
-// }
-
-
 const initMap=function(store){
   // console.log('-----------'); // debugging
   // console.log(apiHost); // debugging
   // console.log('-----------'); // debugging
-
-  const map = store.selectMap();
 
   ////////////////////
   ////  Styling
@@ -174,7 +128,6 @@ const initMap=function(store){
      }else {
        return styleCom
      }
-      // return styleCom
     },
     // minZoom:16,
     // maxZoom:23,
@@ -187,36 +140,6 @@ const initMap=function(store){
   })
 
   const parentUid = store.selectTreeViewRootId();
-
-  // console.log('VTL store') // debugging
-  // console.log(store) // debugging
-  // console.log('VTL Layer') // debugging
-  // console.log(layer) // debugging
-
-  // map.addLayer(layer)
-
-  // const addLayerObj = {
-  //   displayName: 'NSI VTL 1',
-  //   parentUid: parentUid,
-  //   type:"notfolder",
-  //   mapLayer: layer,
-  //   visible: true,
-  //   zoomTo: false, // error if set to true - getExtent not available in store
-  // };
-
-  // console.log('----------------')
-  // console.log(addLayerObj)
-  // console.log('Current directory: ' + process.cwd());
-
-  // saveObject(addLayerObj, 'outputs/object.json')
-  // console.log('----------------wrote to file')
-
-
-  // console.log(JSON.stringify(addLayerObj))
-
-  // store.doAddLayer(addLayerObj)
-
-  // map.addLayer(layer)
 
   store.doAddLayer({
     displayName: 'NSI VTL 1',
