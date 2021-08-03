@@ -17,6 +17,9 @@ import {
 } from "@corpsmap/corpsmap";
 import "@corpsmap/corpsmap/css/corpsmap.css";
 import download from '../../cm-plugins/download';
+import nsiVTL from '../../cm-plugins/vtl/index';
+// import nsiDL from '../../cm-plugins/nsi/index';
+
 class MapPage extends React.Component {
   render(){
     return (
@@ -37,6 +40,8 @@ class MapPage extends React.Component {
                 zoomHome,
                 zoomToBox,
                 download,
+                nsiVTL,
+                // nsiDL
               ]}
             />        
         </div>
