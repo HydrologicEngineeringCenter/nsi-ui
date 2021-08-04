@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@corpsmap/corpsmap": "^0.1.0",
-    "citysdk": "^2.1.7",
+    "@corpsmap/corpsmap": "^0.9.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "^4.0.3",
