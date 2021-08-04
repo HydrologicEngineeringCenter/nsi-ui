@@ -35,7 +35,6 @@ export default{
 
   // action creator
   doNsiVTLInitialize: () => ({ dispatch, store, anonGet }) => {
-    // console.log('doNsiVTLInitialize************');
     dispatch({
       type: NSI_VTL_INITALIZE_START,
       payload: {
@@ -46,7 +45,6 @@ export default{
   },
   
   reactNsiVTLShouldInitialize: (state) => {
-    // console.log(state.vtl._shouldInitialize); // debugging
     if(state.vtl._shouldInitialize) return { actionCreator: "doNsiVTLInitialize" };
   }
 };
@@ -57,9 +55,6 @@ const nsiLayers={
 }
 
 const initMap=function(store){
-  // console.log('-----------'); // debugging
-  // console.log(apiHost); // debugging
-  // console.log('-----------'); // debugging
 
   ////////////////////
   ////  Styling
@@ -117,8 +112,6 @@ const initMap=function(store){
   ////////////////////
   let layer=new VectorTileLayer({
     style: function(feature, resolution){
-      // console.log('----- VTL feature -----') // debugging
-      // console.log(feature) // debugging
      if (feature.properties_.st_damcat === "RES"){
        return styleRes
      }else if (feature.properties_.st_damcat === "PUB"){
@@ -129,8 +122,8 @@ const initMap=function(store){
        return styleCom
      }
     },
-    // minZoom:16,
-    // maxZoom:23,
+    // can use minZoom and maxZoom to optimize
+    // resource usage here
     source: new VectorTileSource({
       attributions: 'USACE',
       maxZoom:15,
@@ -149,55 +142,4 @@ const initMap=function(store){
     visible: true,
     zoomTo: false, // error if set to true - getExtent not available in store
   })
-
-//   /*let layer2=new VectorTileLayer({
-//     style: function(feature, resolution){
-//       //console.log(feature)
-//      if (feature.properties_.st_damcat === "RES"){
-//        return styleRes
-//      }else if (feature.properties_.st_damcat === "PUB"){
-//        return stylePub
-//      }else if (feature.properties_.st_damcat === "IND"){
-//       return styleInd
-//      }else {
-//        return styleCom
-//      }
-//     },
-//     source: new VectorTileSource({
-      
-//       attributions: 'USACE',
-//       format: new MVT(),
-//       url:nsiLayers.NSIP2,
-//     })
-//   })
-//   store.doAddLayer({
-//     displayName: 'NSI VTL 2',
-//     parentUid: parentUid,
-//     type:"notfolder",
-//     mapLayer: layer2,
-//     visible: true,
-//     zoomTo: false,
-//   }) */
-//   //map.on('click',function(evt) {
-//       /*var f = map.getFeaturesAtPixel(evt.pixel)
-//       if (f.length === 0) {
-//         //no feature?
-//       } else {
-//         //check if the property for x or y is undefined - if so, go to the next feature. if no feature has x or y property, skip.
-//         var feature;
-//         for(feature of f){
-//           if(feature.getProperties().x){//truthy
-//             //console.log("X coordinate is: " + feature.getProperties().x)
-//             //console.log("Y coordinate is: " + feature.getProperties().y)
-//             var url = "http://maps.google.com/maps?q=" + feature.getProperties().y + "," + feature.getProperties().x;
-//             console.log(feature.getProperties());
-//             window.open(url, "_blank");
-//             break;    
-//           }else{//falsy
-//             //console.log("falsy X coordinate is: " + feature.getProperties().x)
-//           }         
-//         }
-
-//       }*/
-//   //})
 };

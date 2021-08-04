@@ -1,10 +1,7 @@
-// const census = require("citysdk")
-import {toLonLat} from 'ol/proj';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import Select from 'ol/interaction/Select';
-import {click} from 'ol/events/condition';
 
 const NSI_DOWNLOAD_INITALIZE_START='NSI_DOWNLOAD_INITALIZE_START';
 const NSI_DOWNLOAD_INITALIZE_END='NSI_DOWNLOAD_INITALIZE_END';
@@ -52,9 +49,6 @@ export default{
 const initMap=function(store){
 
   const map = store.selectMap();
-  
-  // console.log('---- map'); // debugging
-  // console.log(map); // debugging
 
   // state mask
   const vl = new VectorLayer({
