@@ -17,7 +17,7 @@ const DownloadConfirmationPopUp = props => {
 
         <button
           type="button"
-          className={`${classes['btn-cancel']} ${"btn btn-danger"}`}
+          className={`${classes.btn} ${"btn btn-danger"}`}
           href="#"
           id="popup-closer">Cancel</button>
 

@@ -34,11 +34,12 @@
   padding: 4px !important;
   display: inline-block !important;
   margin-right: 8px !important;
+  font-size: .8rem !important;
 }
 
 .btn-cancel {
   border-radius: 12px !important;
-  right: 8px !important;
+  /* right: 8px !important; */
 }
 
 .popup-text {
@@ -50,4 +51,8 @@
 p {
   margin: 0 0 0 !important;
 }
+
+/* button {
+  font-size: .8rem !important;
+} */
 
