@@ -50,7 +50,6 @@ export default{
     selectMapLoading: () => {
       return;
     }
-
   };
 
 const initMap=function(store){
@@ -90,7 +89,7 @@ const initMap=function(store){
   map.addInteraction(selectSingleClick);
 
   selectSingleClick.on('select', function(evt) {
-
+    
     console.log(Object.getOwnPropertyNames(evt));
 
     const state = evt.selected[0].values_.NAME
@@ -103,32 +102,32 @@ const initMap=function(store){
     const extentCoords1 = [2,3].map(x=>extentCoords[x])
     const overlayCoord = [(extentCoords0[0]+extentCoords1[0])/2,(extentCoords0[1]+extentCoords1[1])/2]
 
-  // pop-up on click
-  content.innerHTML = '<p>Download structure data for <div><code>' + state + '</code> ?</div></p>';
-  overlay.setPosition(overlayCoord);
+    // pop-up on click
+    content.innerHTML = '<p>Download structure data for ' + state + '?</p>';
+    overlay.setPosition(overlayCoord);
 
-  // Reset popup
-  function closeDownPopUp () {
-    overlay.setPosition(undefined);
-    closer.blur();
-    selectSingleClick.getFeatures().clear(); // clear selected state
-    return false;
-  }
+    // Reset popup
+    function closeDownPopUp () {
+      overlay.setPosition(undefined);
+      closer.blur();
+      selectSingleClick.getFeatures().clear(); // clear selected state
+      return false;
+    }
 
-  // Map closeDownPopUp to cancel button
-  closer.onclick = closeDownPopUp;
+    // Map closeDownPopUp to cancel button
+    closer.onclick = closeDownPopUp;
 
-  // Download button initiates download and closeDownPopUp
-  confirm.onclick = function () {
-    const url = downloadUrlTemplate.replace('{statefips}', statefips);
+    // Download button initiates download and closeDownPopUp
+    confirm.onclick = function () {
+      const url = downloadUrlTemplate.replace('{statefips}', statefips);
 
-    // create hidden hyperlink and download data
-    const a = document.createElement("a");
-    a.href = url;
-    a.setAttribute("download", `${statefips}.gpkg.7z`);
-    a.click();
-  
-    closeDownPopUp();
-    };
+      // create hidden hyperlink and download data
+      const a = document.createElement("a");
+      a.href = url;
+      a.setAttribute("download", `${statefips}.gpkg.7z`);
+      a.click();
+    
+      closeDownPopUp();
+      };
   });
 }
