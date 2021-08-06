@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'redux-bundler-react';
 import Map from '../map/map-page'
 import Banner from './banner'
+import DownloadConfirmationPopUp from '../../cm-plugins/download/DownloadConfirmationPopUp';
 
 function MainPage(props) {
 
@@ -16,6 +17,7 @@ function MainPage(props) {
     <div >
       <Banner/>
       <Map/>
+      <DownloadConfirmationPopUp/>
     </div>
   )
 }

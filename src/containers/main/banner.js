@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'redux-bundler-react';
 import mapper from '../../resources/GeoFDA_Icon.ico';
+import './main.css';
+
 class Banner extends React.Component{
     render(){
         return (

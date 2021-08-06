@@ -1,0 +1,53 @@
+.olPopup {
+  position: absolute;
+  background-color: #4e5d6c;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  min-width: 280px;
+}
+.olPopup:after, .olPopup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.olPopupCloser {
+  text-decoration: none;
+  position: absolute;
+  bottom: 2px;
+  right: 8px;
+}
+.olPopupCloser:after {
+  content: "✖";
+}
+
+.btn {
+  border-radius: 12px !important;
+  padding: 4px !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.btn-cancel {
+  border-radius: 12px !important;
+  right: 8px !important;
+}
+
+.popup-text {
+  text-align: left !important;
+  margin: 0 0 1em;
+  font-size: 1rem;
+}
+
+p {
+  margin: 0 0 0 !important;
+}
+
