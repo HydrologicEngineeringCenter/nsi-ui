@@ -4,6 +4,7 @@ import Circle from 'ol/style/Circle'
 import MVT from 'ol/format/MVT';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
+import Feature from 'ol/Feature';
 
 const apiHost=process.env.REACT_APP_APIHOST_TILES
 const NSI_VTL_INITALIZE_START='NSI_VTL_INITALIZE_START';
@@ -112,11 +113,11 @@ const initMap=function(store){
   ////////////////////
   let layer=new VectorTileLayer({
     style: function(feature, resolution){
-     if (feature.properties_.st_damcat === "RES"){
+     if (feature.values_.st_damcat === "RES"){
        return styleRes
-     }else if (feature.properties_.st_damcat === "PUB"){
+     }else if (feature.values_.st_damcat === "PUB"){
        return stylePub
-     }else if (feature.properties_.st_damcat === "IND"){
+     }else if (feature.values_.st_damcat === "IND"){
       return styleInd
      }else {
        return styleCom
@@ -127,7 +128,8 @@ const initMap=function(store){
     source: new VectorTileSource({
       attributions: 'USACE',
       maxZoom:15,
-      format: new MVT(),
+      // default use RenderFeature, switch to ol/Feature for compatibility with Select() in the state mask
+      format: new MVT({featureClass:Feature}), 
       url: nsiLayers.NSIP1,
     })
   })

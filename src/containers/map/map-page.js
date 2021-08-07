@@ -14,6 +14,7 @@ import {
   zoomInOut,
   zoomHome,
   zoomToBox,
+  mapLoadingIndicator
 } from "@corpsmap/corpsmap";
 import "@corpsmap/corpsmap/css/corpsmap.css";
 import download from '../../cm-plugins/download';
@@ -38,6 +39,7 @@ class MapPage extends React.Component {
                 zoomInOut,
                 zoomHome,
                 zoomToBox,
+                mapLoadingIndicator,
                 download,
                 nsiVTL,
               ]}
