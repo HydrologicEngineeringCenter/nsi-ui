@@ -4,55 +4,50 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Select from 'ol/interaction/Select';
 import Overlay from 'ol/Overlay';
 
-const downloadUrlTemplate=process.env.REACT_APP_APIHOST_NSI_STATE_GEOPKG_URL_TEMPLATE;
-const NSI_DOWNLOAD_INITALIZE_START='NSI_DOWNLOAD_INITALIZE_START';
-const NSI_DOWNLOAD_INITALIZE_END='NSI_DOWNLOAD_INITALIZE_END';
-const MAP_INITIALIZED='MAP_INITIALIZED';
+const downloadUrlTemplate = process.env.REACT_APP_APIHOST_NSI_STATE_GEOPKG_URL_TEMPLATE;
+const NSI_DOWNLOAD_INITALIZE_START = 'NSI_DOWNLOAD_INITALIZE_START';
+const NSI_DOWNLOAD_INITALIZE_END = 'NSI_DOWNLOAD_INITALIZE_END';
+const MAP_INITIALIZED = 'MAP_INITIALIZED';
 
-export default{
+export default {
 
-    name:'nsidownload',
+  name: 'nsidownload',
 
-    getReducer: () => {
-      const initialData = {
-        _shouldInitialize: false,
-      };
-      return (state = initialData, { type, payload }) => {
-        switch(type){
-          case NSI_DOWNLOAD_INITALIZE_START:
-          case NSI_DOWNLOAD_INITALIZE_END:
-            return Object.assign({}, state, payload);
-          case MAP_INITIALIZED:
-            return Object.assign({}, state, {
-              _shouldInitialize: true
-            })
-          default:
-            return state;
-        }
+  getReducer: () => {
+    const initialData = {
+      _shouldInitialize: false,
+    };
+    return (state = initialData, { type, payload }) => {
+      switch (type) {
+        case NSI_DOWNLOAD_INITALIZE_START:
+        case NSI_DOWNLOAD_INITALIZE_END:
+          return Object.assign({}, state, payload);
+        case MAP_INITIALIZED:
+          return Object.assign({}, state, {
+            _shouldInitialize: true
+          })
+        default:
+          return state;
       }
-    },
-
-    doNsiDownloadInitialize: () => ({ dispatch, store, anonGet }) => {
-      dispatch({
-        type: NSI_DOWNLOAD_INITALIZE_START,
-        payload: {
-          _shouldInitialize: false,
-        }
-      })
-      initMap(store);      
-    },
-
-    reactNsiDownloadShouldInitialize: (state) => {
-      if(state.nsidownload._shouldInitialize) return { actionCreator: "doNsiDownloadInitialize" };
-    },
-
-    // work around to uncaught TypeError in corpsmap
-    selectMapLoading: () => {
-      return;
     }
-  };
+  },
 
-const initMap=function(store){
+  doNsiDownloadInitialize: () => ({ dispatch, store, anonGet }) => {
+    dispatch({
+      type: NSI_DOWNLOAD_INITALIZE_START,
+      payload: {
+        _shouldInitialize: false,
+      }
+    })
+    initMap(store);
+  },
+
+  reactNsiDownloadShouldInitialize: (state) => {
+    if (state.nsidownload._shouldInitialize) return { actionCreator: "doNsiDownloadInitialize" };
+  },
+};
+
+const initMap = function (store) {
 
   const map = store.selectMap();
 
@@ -63,7 +58,7 @@ const initMap=function(store){
       url: 'https://raw.githubusercontent.com/uscensusbureau/citysdk/master/v2/GeoJSON/20m/2017/state.json'
     })
   })
-  
+
   const container = document.getElementById('popup');
   const content = document.getElementById('popup-content');
   const closer = document.getElementById('popup-closer');
@@ -88,46 +83,55 @@ const initMap=function(store){
 
   map.addInteraction(selectSingleClick);
 
-  selectSingleClick.on('select', function(evt) {
-    
-    console.log(Object.getOwnPropertyNames(evt));
-
-    const state = evt.selected[0].values_.NAME
-    const statefips = evt.selected[0].values_.STATEFP
-
-    // extent_ returns 2 pairs of coordinates
-    // averaging the 2 pairs returns the center of selected polygon
-    const extentCoords = evt.selected[0].values_.geometry.extent_
-    const extentCoords0 = [0,1].map(x=>extentCoords[x])
-    const extentCoords1 = [2,3].map(x=>extentCoords[x])
-    const overlayCoord = [(extentCoords0[0]+extentCoords1[0])/2,(extentCoords0[1]+extentCoords1[1])/2]
-
-    // pop-up on click
-    content.innerHTML = '<p>Download structure data for ' + state + '?</p>';
-    overlay.setPosition(overlayCoord);
+  selectSingleClick.on('select', function (evt) {
 
     // Reset popup
-    function closeDownPopUp () {
+    function closeDownPopUp() {
       overlay.setPosition(undefined);
       closer.blur();
       selectSingleClick.getFeatures().clear(); // clear selected state
       return false;
     }
 
-    // Map closeDownPopUp to cancel button
-    closer.onclick = closeDownPopUp;
-
-    // Download button initiates download and closeDownPopUp
-    confirm.onclick = function () {
-      const url = downloadUrlTemplate.replace('{statefips}', statefips);
-
-      // create hidden hyperlink and download data
-      const a = document.createElement("a");
-      a.href = url;
-      a.setAttribute("download", `${statefips}.gpkg.7z`);
-      a.click();
-    
+    // if clicked on the state mask, evt is a SelectEvent obj
+    // if clicked on vtl, evt is a RenderFeature obj
+    // RenderFeature is not compatible with Select(), solution is to switch to 
+    // https://github.com/openlayers/openlayers/issues/9840
+    if (evt.selected[0] === undefined || evt.selected[0].values_.NAME === undefined) {
+      // error handling
+      // SelectEvent not targeting available state
+      // ie. clicked outside the US or clicked on a VTL point
       closeDownPopUp();
+    } else {
+
+      const state = evt.selected[0].values_.NAME
+      const statefips = evt.selected[0].values_.STATEFP
+
+      // extent_ returns 2 pairs of coordinates
+      // averaging the 2 pairs returns the center of selected polygon
+      const extentCoords = evt.selected[0].values_.geometry.extent_
+      const extentCoords0 = [0, 1].map(x => extentCoords[x])
+      const extentCoords1 = [2, 3].map(x => extentCoords[x])
+      const overlayCoord = [(extentCoords0[0] + extentCoords1[0]) / 2, (extentCoords0[1] + extentCoords1[1]) / 2]
+
+      // pop-up on click
+      content.innerHTML = '<p>Download structure data for ' + state + '?</p>';
+      overlay.setPosition(overlayCoord);
+
+      // Map closeDownPopUp to cancel button
+      closer.onclick = closeDownPopUp;
+
+      // Download button initiates download and closeDownPopUp
+      confirm.onclick = function () {
+        const url = downloadUrlTemplate.replace('{statefips}', statefips);
+
+        // create hidden hyperlink and download data
+        const a = document.createElement("a");
+        a.href = url;
+        a.click();
+
+        closeDownPopUp();
       };
+    }
   });
 }
