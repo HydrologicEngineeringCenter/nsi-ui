@@ -13,7 +13,7 @@ class Banner extends React.Component{
                 </div>
                 <div className="nav pull-right">
                     <a 
-                        class="btn btn-secondary" // gray outline
+                        className="btn btn-secondary" // gray outline
                         href="https://www.hec.usace.army.mil/fwlink/?linkid=nsi-download-tool"
                         target="_blank" // open in new tab
                         style={{fontSize:'10px'}}>
