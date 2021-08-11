@@ -4,7 +4,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Select from 'ol/interaction/Select';
 import Overlay from 'ol/Overlay';
 
-const downloadUrlTemplate = process.env.REACT_APP_APIHOST_NSI_STATE_GEOPKG_URL_TEMPLATE;
+const apiHost = process.env.REACT_APP_NSI_DOWNLOAD_APIHOST;
+const route = process.env.REACT_APP_NSI_DOWNLOAD_ROUTE;
+const fileNameTemplate = process.env.REACT_APP_NSI_DOWNLOAD_FILE_NAME_TEMPLATE;
 const NSI_DOWNLOAD_INITALIZE_START = 'NSI_DOWNLOAD_INITALIZE_START';
 const NSI_DOWNLOAD_INITALIZE_END = 'NSI_DOWNLOAD_INITALIZE_END';
 const MAP_INITIALIZED = 'MAP_INITIALIZED';
@@ -95,7 +97,7 @@ const initMap = function (store) {
 
     // if clicked on the state mask, evt is a SelectEvent obj
     // if clicked on vtl, evt is a RenderFeature obj
-    // RenderFeature is not compatible with Select(), solution is to switch to 
+    // RenderFeature is not compatible with Select(), solution is to switch to ol/Feature
     // https://github.com/openlayers/openlayers/issues/9840
     if (evt.selected[0] === undefined || evt.selected[0].values_.NAME === undefined) {
       // error handling
@@ -123,7 +125,8 @@ const initMap = function (store) {
 
       // Download button initiates download and closeDownPopUp
       confirm.onclick = function () {
-        const url = downloadUrlTemplate.replace('{statefips}', statefips);
+        
+        const url = apiHost + route + fileNameTemplate.replace('{statefips}', statefips);
 
         // create hidden hyperlink and download data
         const a = document.createElement("a");
