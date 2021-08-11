@@ -38,7 +38,7 @@ export default {
             let claims = parseJwt(data);
             if(claims){
                 dispatch({type:UPDATE_AUTH_TOKEN,payload:{nsiToken:data,userName:claims.name}});
-                store.doUpdateUrl('/main')
+                store.doUpdateUrl('/nsi/main')
             }
         });      
     },

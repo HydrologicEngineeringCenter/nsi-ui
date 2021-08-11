@@ -42,7 +42,7 @@ export default{
         _shouldInitialize: false,
       }
     })
-    initMap(store);
+    //initMap(store);
   },
   
   reactNsiVTLShouldInitialize: (state) => {
@@ -113,11 +113,12 @@ const initMap=function(store){
   ////////////////////
   let layer=new VectorTileLayer({
     style: function(feature, resolution){
-     if (feature.values_.st_damcat === "RES"){
+     const damcat = feature.get('st_damcat');
+     if (damcat === "RES"){
        return styleRes
-     }else if (feature.values_.st_damcat === "PUB"){
+     }else if (damcat === "PUB"){
        return stylePub
-     }else if (feature.values_.st_damcat === "IND"){
+     }else if (damcat === "IND"){
       return styleInd
      }else {
        return styleCom

@@ -4,7 +4,7 @@ import FourOhFour from '../containers/404';
 import LoginPage from '../containers/login/LoginPage.js';
 
 export default createRouteBundle({
-  '/': LoginPage,
-  '/main': Main,
+  '/nsi': LoginPage,
+  '/nsi/main': Main,
   '*': FourOhFour
 })
