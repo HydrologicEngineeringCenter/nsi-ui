@@ -114,7 +114,12 @@ const initMap = function (store) {
       const extentCoords = evt.selected[0].values_.geometry.extent_
       const extentCoords0 = [0, 1].map(x => extentCoords[x])
       const extentCoords1 = [2, 3].map(x => extentCoords[x])
-      const overlayCoord = [(extentCoords0[0] + extentCoords1[0]) / 2, (extentCoords0[1] + extentCoords1[1]) / 2]
+
+      if (state === 'Alaska') { // const and let are block scoped, var isn't
+        var overlayCoord = [extentCoords0[0] + 2500000, (extentCoords0[1] + extentCoords1[1]) / 2]
+      } else {
+        var overlayCoord = [(extentCoords0[0] + extentCoords1[0]) / 2, (extentCoords0[1] + extentCoords1[1]) / 2]
+      }
 
       // pop-up on click
       content.innerHTML = '<p>Download structure data for ' + state + '?</p>';
