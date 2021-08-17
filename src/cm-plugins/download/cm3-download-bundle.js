@@ -198,7 +198,7 @@ const initMap = store => {
 
       // overlay.setPosition(overlayCoord);
 
-      // Forcing component re-render using div selection; unable to enable continual update 
+      // Forcing component re-render using div selection as a workaround; unable to enable continual update 
       // from DownloadConfirmationPopUp.js - connection only established during map initialization, 
       // could be faulty selector implementation or conflict between openlayers and reactjs
       const showPopup = store.selectShowPopup();
