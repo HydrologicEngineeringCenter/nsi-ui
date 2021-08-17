@@ -3,6 +3,9 @@ import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import Select from 'ol/interaction/Select';
 import Overlay from 'ol/Overlay';
+import { createSelector } from 'redux-bundler';
+import DownloadConfirmationPopUp from './DownloadConfirmationPopUp';
+import { renderToString } from 'react-dom/server';
 
 const apiHost = process.env.REACT_APP_NSI_DOWNLOAD_APIHOST;
 const route = process.env.REACT_APP_NSI_DOWNLOAD_ROUTE;
@@ -11,6 +14,8 @@ const NSI_DOWNLOAD_INITALIZE_START = 'NSI_DOWNLOAD_INITALIZE_START';
 const NSI_DOWNLOAD_INITALIZE_END = 'NSI_DOWNLOAD_INITALIZE_END';
 const MAP_INITIALIZED = 'MAP_INITIALIZED';
 
+const NSI_DOWNLOAD_UPDATE_POPUP = 'NSI_DOWNLOAD_UPDATE_POPUP';
+
 export default {
 
   name: 'nsidownload',
@@ -18,7 +23,10 @@ export default {
   getReducer: () => {
     const initialData = {
       _shouldInitialize: false,
+      _showPopup: true,
+      _showConfirm: true
     };
+
     return (state = initialData, { type, payload }) => {
       switch (type) {
         case NSI_DOWNLOAD_INITALIZE_START:
@@ -28,6 +36,8 @@ export default {
           return Object.assign({}, state, {
             _shouldInitialize: true
           })
+        case NSI_DOWNLOAD_UPDATE_POPUP:
+          return Object.assign({}, state, payload);
         default:
           return state;
       }
@@ -47,9 +57,88 @@ export default {
   reactNsiDownloadShouldInitialize: (state) => {
     if (state.nsidownload._shouldInitialize) return { actionCreator: "doNsiDownloadInitialize" };
   },
+
+  ////////////////////////////////////////////////////////////
+  // Incorporate popup for easier state access from 
+  // other places in the component tree
+  ////////////////////////////////////////////////////////////
+  doShowPopup: () => ({ dispatch }) => {
+    dispatch({
+      type: NSI_DOWNLOAD_UPDATE_POPUP,
+      payload: {
+        _showPopup: true,
+      }
+    })
+  },
+
+  doHidePopup: () => ({ dispatch }) => {
+    dispatch({
+      type: NSI_DOWNLOAD_UPDATE_POPUP,
+      payload: {
+        _showPopup: false,
+      }
+    })
+  },
+
+  doShowConfirm: () => ({ dispatch }) => {
+    dispatch({
+      type: NSI_DOWNLOAD_UPDATE_POPUP,
+      payload: {
+        _showConfirm: true,
+      }
+    })
+  },
+
+  doHideConfirm: () => ({ dispatch }) => {
+    dispatch({
+      type: NSI_DOWNLOAD_UPDATE_POPUP,
+      payload: {
+        _showConfirm: false,
+      }
+    })
+  },
+
+  selectNSIDownload: state => state.nsidownload,
+
+  selectShowPopup: createSelector(
+    'selectNSIDownload',
+    downloaderData => downloaderData._showPopup
+  ),
+
+  selectShowConfirm: createSelector(
+    'selectNSIDownload',
+    downloaderData => downloaderData._showConfirm
+  ),
 };
 
-const initMap = function (store) {
+// Forcing re-rendering
+const renderPopup = ({ showPopup, showConfirm }, map, overlayCoord) => {
+
+  const container = document.getElementById('download-confirm-popup');
+
+  const overlay = new Overlay({
+    element: container,
+    // autopan options go here
+    // disabled due to conflict with react
+    // component must be fully rendered to 
+    // correctly determine panning boundary
+  });
+
+  overlay.setPosition(overlayCoord);
+  map.addOverlay(overlay);
+  
+  container.outerHTML = renderToString(
+    <DownloadConfirmationPopUp showPopup={showPopup} showConfirm={showConfirm} />
+  )
+}
+
+// clear selection + close down popup
+const closePopup = (clickEvent, map) => {
+  renderPopup({showPopup:false, showConfirm:true}, map, undefined);
+  clickEvent.getFeatures().clear();
+}
+
+const initMap = store => {
 
   const map = store.selectMap();
 
@@ -61,22 +150,7 @@ const initMap = function (store) {
     })
   })
 
-  const container = document.getElementById('popup');
-  const content = document.getElementById('popup-content');
-  const closer = document.getElementById('popup-closer');
-  const confirm = document.getElementById('download-confirm');
-
-  const overlay = new Overlay({
-    element: container,
-    autoPan: true,
-    autoPanAnimation: {
-      duration: 250,
-    },
-  });
-  overlay.setPosition(undefined);
-
   map.addLayer(vl);
-  map.addOverlay(overlay);
 
   //////////////////////////////
   // Pop-up
@@ -87,27 +161,28 @@ const initMap = function (store) {
 
   selectSingleClick.on('select', function (evt) {
 
-    // Reset popup
-    function closeDownPopUp() {
-      overlay.setPosition(undefined);
-      closer.blur();
-      selectSingleClick.getFeatures().clear(); // clear selected state
-      return false;
-    }
-
     // if clicked on the state mask, evt is a SelectEvent obj
     // if clicked on vtl, evt is a RenderFeature obj
     // RenderFeature is not compatible with Select(), solution is to switch to ol/Feature
     // https://github.com/openlayers/openlayers/issues/9840
-    if (evt.selected[0] === undefined || evt.selected[0].values_.NAME === undefined) {
-      // error handling
-      // SelectEvent not targeting available state
-      // ie. clicked outside the US or clicked on a VTL point
-      closeDownPopUp();
+    if (evt.selected[0] === undefined) { // click outside the state mask
+      store.doHidePopup();
+      closePopup(selectSingleClick, map);
+    } else if (evt.selected[0].values_.NAME === undefined) { // clicked on vtl
+      store.doHidePopup(); // no re-render, only change state
     } else {
+      store.doShowPopup();
 
       const state = evt.selected[0].values_.NAME
       const statefips = evt.selected[0].values_.STATEFP
+
+      if (state === 'Puerto Rico') {
+        store.doHideConfirm();
+        var popupPrompt = '<p>Data for ' + state + ' is not available</p>';
+      } else {
+        store.doShowConfirm();
+        var popupPrompt = '<p>Download structure data for ' + state + '?</p>';
+      }
 
       // extent_ returns 2 pairs of coordinates
       // averaging the 2 pairs returns the center of selected polygon
@@ -121,25 +196,43 @@ const initMap = function (store) {
         var overlayCoord = [(extentCoords0[0] + extentCoords1[0]) / 2, (extentCoords0[1] + extentCoords1[1]) / 2]
       }
 
-      // pop-up on click
-      content.innerHTML = '<p>Download structure data for ' + state + '?</p>';
-      overlay.setPosition(overlayCoord);
+      // overlay.setPosition(overlayCoord);
 
-      // Map closeDownPopUp to cancel button
-      closer.onclick = closeDownPopUp;
+      // Forcing component re-render using div selection as a workaround; unable to enable continual update 
+      // from DownloadConfirmationPopUp.js - connection only established during map initialization, 
+      // could be faulty selector implementation or conflict between openlayers and reactjs
+      const showPopup = store.selectShowPopup();
+      const showConfirm = store.selectShowConfirm();
 
-      // Download button initiates download and closeDownPopUp
-      confirm.onclick = function () {
-        
-        const url = apiHost + route + fileNameTemplate.replace('{statefips}', statefips);
+      renderPopup({showPopup, showConfirm}, map, overlayCoord);
 
-        // create hidden hyperlink and download data
-        const a = document.createElement("a");
-        a.href = url;
-        a.click();
+      if (showPopup) {
+        const content = document.getElementById('popup-content');
 
-        closeDownPopUp();
-      };
+        content.innerHTML = popupPrompt;
+
+        // Map closeDownPopUp to cancel button
+        const closer = document.getElementById('popup-closer');
+        closer.onclick = () => closePopup(selectSingleClick, map);
+
+        // Download button initiates download and closeDownPopUp
+        if (showConfirm) {
+          const confirm = document.getElementById('download-confirm');
+
+          confirm.onclick = function () {
+
+            const url = apiHost + route + fileNameTemplate.replace('{statefips}', statefips);
+
+            // create hidden hyperlink and download data
+            const a = document.createElement("a");
+            a.href = url;
+            a.click();
+
+            store.doHidePopup();
+            closePopup(selectSingleClick, map);
+          };
+        }
+      }
     }
   });
 }

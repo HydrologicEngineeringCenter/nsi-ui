@@ -5,6 +5,8 @@ import LoginPage from '../containers/login/LoginPage.js';
 
 export default createRouteBundle({
   '/nsi': LoginPage,
+  '/nsi/': LoginPage,
   '/nsi/main': Main,
+  '/nsi/main/': Main,
   '*': FourOhFour
 })
