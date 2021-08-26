@@ -51,3 +51,4 @@ class MapPage extends React.Component {
 export default connect(
   MapPage
   );
+

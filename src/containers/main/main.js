@@ -11,14 +11,13 @@ function MainPage(props) {
 
   // not logged not
   if(!authNSIToken) {
-    doUpdateUrl("/");
+    doUpdateUrl("/nsi");
   }
 
   return (
-    <div >
+    <div className="main-container">
       <Banner/>
       <Map/>
-      {/* <DownloadConfirmationPopUp showPopup={showPopup} showConfirm={showConfirm} /> */}
     </div>
   )
 }
