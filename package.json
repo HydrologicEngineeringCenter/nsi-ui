@@ -5,7 +5,6 @@
   "homepage": "nsi",
   "dependencies": {
     "@corpsmap/corpsmap": "^0.9.3",
-    "chrome": "^0.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "^4.0.3",
@@ -13,7 +12,7 @@
     "redux-bundler-react": "^1.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "BROWSER='' HTTPS=true react-scripts start",
     "build": "react-scripts build"
   },
   "browserslist": {
