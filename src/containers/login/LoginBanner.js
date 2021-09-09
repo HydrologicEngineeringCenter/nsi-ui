@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'redux-bundler-react';
 import mapper from '../../resources/GeoFDA_Icon.ico';
-import cwbiLogo from '../../resources/CWBI_Logo_160x160.png';
+import cwbiLogo from '../../resources/CWBI_Logo_45x45.png';
 
 import "../main/main.css";
 import classes from "./LoginBanner.module.css"
