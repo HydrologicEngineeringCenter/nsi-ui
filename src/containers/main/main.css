@@ -1,3 +1,17 @@
+.main-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-fluid, .corpsmap, .cm-container-fluid, .north-container{
+  height: 100% !important;
+}
+
+canvas:first {
+  width: 100% !important;
+}
+
 .nv-bg{
   background-color: #000000;
 }
