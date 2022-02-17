@@ -1,0 +1,16 @@
+# use to setup dev environment
+version: "3.9"
+services:
+  nsi_download_ui:
+    container_name: NSIDOWNLOAD_DEV
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - $PWD:/workspaces/nsi-ui
+    env_file:
+      - .devcontainer/.devcontainer.download-ui.env
+    working_dir: /workspaces/nsi-ui
+    tty: true
