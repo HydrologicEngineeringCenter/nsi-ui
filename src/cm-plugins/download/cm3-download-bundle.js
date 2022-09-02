@@ -7,9 +7,8 @@ import { createSelector } from 'redux-bundler';
 import DownloadConfirmationPopUp from './DownloadConfirmationPopUp';
 import { renderToString } from 'react-dom/server';
 
-const apiHost = process.env.REACT_APP_NSI_DOWNLOAD_APIHOST;
-const route = process.env.REACT_APP_NSI_DOWNLOAD_ROUTE;
-const fileNameTemplate = process.env.REACT_APP_NSI_DOWNLOAD_FILE_NAME_TEMPLATE;
+const filePathTemplate = process.env.REACT_APP_NSI_DOWNLOAD_FILE_PATH_TEMPLATE;
+
 const NSI_DOWNLOAD_INITALIZE_START = 'NSI_DOWNLOAD_INITALIZE_START';
 const NSI_DOWNLOAD_INITALIZE_END = 'NSI_DOWNLOAD_INITALIZE_END';
 const MAP_INITIALIZED = 'MAP_INITIALIZED';
@@ -59,7 +58,7 @@ export default {
   },
 
   ////////////////////////////////////////////////////////////
-  // Incorporate popup for easier state access from 
+  // Incorporate popup for easier state access from
   // other places in the component tree
   ////////////////////////////////////////////////////////////
   doShowPopup: () => ({ dispatch }) => {
@@ -120,13 +119,13 @@ const renderPopup = ({ showPopup, showConfirm }, map, overlayCoord) => {
     element: container,
     // autopan options go here
     // disabled due to conflict with react
-    // component must be fully rendered to 
+    // component must be fully rendered to
     // correctly determine panning boundary
   });
 
   overlay.setPosition(overlayCoord);
   map.addOverlay(overlay);
-  
+
   container.outerHTML = renderToString(
     <DownloadConfirmationPopUp showPopup={showPopup} showConfirm={showConfirm} />
   )
@@ -134,7 +133,7 @@ const renderPopup = ({ showPopup, showConfirm }, map, overlayCoord) => {
 
 // clear selection + close down popup
 const closePopup = (clickEvent, map) => {
-  renderPopup({showPopup:false, showConfirm:true}, map, undefined);
+  renderPopup({ showPopup: false, showConfirm: true }, map, undefined);
   clickEvent.getFeatures().clear();
 }
 
@@ -159,7 +158,7 @@ const initMap = store => {
 
   map.addInteraction(selectSingleClick);
 
-  selectSingleClick.on('select', function (evt) {
+  selectSingleClick.on('select', function(evt) {
 
     // if clicked on the state mask, evt is a SelectEvent obj
     // if clicked on vtl, evt is a RenderFeature obj
@@ -196,15 +195,13 @@ const initMap = store => {
         var overlayCoord = [(extentCoords0[0] + extentCoords1[0]) / 2, (extentCoords0[1] + extentCoords1[1]) / 2]
       }
 
-      // overlay.setPosition(overlayCoord);
-
-      // Forcing component re-render using div selection as a workaround; unable to enable continual update 
-      // from DownloadConfirmationPopUp.js - connection only established during map initialization, 
+      // Forcing component re-render using div selection as a workaround; unable to enable continual update
+      // from DownloadConfirmationPopUp.js - connection only established during map initialization,
       // could be faulty selector implementation or conflict between openlayers and reactjs
       const showPopup = store.selectShowPopup();
       const showConfirm = store.selectShowConfirm();
 
-      renderPopup({showPopup, showConfirm}, map, overlayCoord);
+      renderPopup({ showPopup, showConfirm }, map, overlayCoord);
 
       if (showPopup) {
         const content = document.getElementById('popup-content');
@@ -219,9 +216,9 @@ const initMap = store => {
         if (showConfirm) {
           const confirm = document.getElementById('download-confirm');
 
-          confirm.onclick = function () {
+          confirm.onclick = function() {
 
-            const url = apiHost + route + fileNameTemplate.replace('{statefips}', statefips);
+            const url = filePathTemplate.replace('{statefips}', statefips);
 
             // create hidden hyperlink and download data
             const a = document.createElement("a");
